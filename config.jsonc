@@ -1,0 +1,150 @@
+{
+	"data":{
+		"nrows": null,
+		"index_col": null,
+		"header": 0,
+		"dtype":{
+			"Premium": "float64",
+			"Year": "int16",
+			"Age": "int8",
+			"PRJ_IDX_RT": "float64",
+			"Tobacco": "int8",
+			"State Code": "category",
+			"Rating Area": "category",
+			"Metal Level": "category",
+			"Plan Type": "category"
+		},
+		"test_size": 0.2,
+		"train_size": 0.8,
+		"y_column": "Premium",
+		"random_state": 0,
+		"memory_optimization": false
+	},
+	"preprocessors":[
+		{
+			"id": "standard-scaling",
+			"name": "standard-scaling",
+			"columns": [
+				"Year",
+				"PRJ_IDX_RT",
+				"Age"
+			]
+		},
+		{
+			"id": "one-hot-encoding",
+			"name":"one-hot-encoding",
+			"params": {
+				"sparse": false,
+				"dtype": "int8",
+				"drop": "first"
+			},
+			"columns": [
+				"State Code",
+				"Rating Area",
+				"Metal Level",
+				"Plan Type"
+			]
+		}
+	],
+	"models":[
+		{
+			"id": "linear",
+			"name": "linear-reg",
+			"preprocessors":[
+				"standard-scaling",
+				"one-hot-encoding"
+			],
+			"verbose": true
+		},
+		{
+			"id": "polynomial-2",
+			"name": "linear-reg",
+			"preprocessors":[
+				"standard-scaling",
+				"one-hot-encoding",
+				{
+					"id": "poly_2",
+					"name": "polynomial",
+					"params": {
+						"degree": 2,
+						"intersection": false,
+						"one": false
+					},
+					"columns": [
+						"Age",
+						"PRJ_IDX_RT"
+					]
+				}
+			],
+			"verbose": true
+		},
+		{
+			"id": "polynomial-3",
+			"name": "linear-reg",
+			"preprocessors":[
+				"standard-scaling",
+				"one-hot-encoding",
+				{
+					"id": "poly_2",
+					"name": "polynomial",
+					"params": {
+						"degree": 3,
+						"intersection": false,
+						"one": false
+					},
+					"columns": [
+						"Age",
+						"PRJ_IDX_RT"
+					]
+				}
+			]
+		},
+		{
+			"id": "random-forest",
+			"name": "random-forest-reg",
+			"preprocessors":[
+				"one-hot-encoding"
+			],
+			"params":{
+				"n_estimators": 100,
+				"min_samples_split": 2,
+				"min_samples_leaf": 1,
+				"max_depth": 5
+			}
+		},
+		{
+			"id": "gradient-boost",
+			"name": "gradient-boosting-reg",
+			"preprocessors":[
+				"one-hot-encoding"
+			],
+			"params":{
+				"learning_rate": 0.1,
+				"n_estimators": 100,
+				"min_samples_split": 2,
+				"min_samples_leaf": 1,
+				"max_depth": 3,
+				"subsample": 1.0
+			}
+		},
+		{
+			"id": "ada-boost",
+			"name": "ada-boost-reg",
+			"preprocessors":[
+				"one-hot-encoding"
+			],
+			"params":{
+				"n_estimators": 50,
+				"learning_rate": 1
+			}
+		}
+	],
+	"scoring": "neg_root_mean_squared_error",
+	"scores": [
+		"explained_variance",
+		"r2",
+		"neg_root_mean_squared_error",
+		"neg_median_absolute_error"
+	],
+	"export_dir": "./output"
+}
